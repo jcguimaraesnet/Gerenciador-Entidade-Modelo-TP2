@@ -8,7 +8,7 @@ namespace GerenciadorEntidades
     class Program
     {
         private const string pressioneQualquerTecla = "Pressione qualquer tecla para exibir o menu principal ...";
-        private static Dictionary<string, DateTime> listaEntidades = new Dictionary<string, DateTime>();
+        private static Dictionary<string, DateTime> listaAmigos = new Dictionary<string, DateTime>();
 
         static void Main(string[] args)
         {
@@ -17,106 +17,130 @@ namespace GerenciadorEntidades
             string opcao;
             do
             {
-                Console.Clear();
-                Console.WriteLine("*** Gerenciador de [Entidades] *** ");
-                Console.WriteLine("1 - Pesquisar [entidades]:");
-                Console.WriteLine("2 - Adicionar [entidade]:");
-                Console.WriteLine("3 - Sair:");
-                Console.WriteLine("\nEscolha uma das opções acima: ");
+                ExibirMenuPrincipal();
 
                 opcao = Console.ReadLine();
-                if (opcao == "1")
+
+                switch (opcao)
                 {
-                    Console.WriteLine("Informe [o campo string ou parte do campo string] [da entidade] que deseja pesquisar:");
-                    var termoDePesquisa = Console.ReadLine();
-                    var entidadesEncontradas = listaEntidades.Where(x => x.Key.ToLower().Contains(termoDePesquisa.ToLower()))
-                                                             .ToList();
-
-                    if (entidadesEncontradas.Count > 0)
-                    {
-                        Console.WriteLine("Selecione uma das opções abaixo para visualizar os dados [das entidades] encontrados:");
-                        for (var index = 0; index < entidadesEncontradas.Count; index++)
-                            Console.WriteLine($"{index} - {entidadesEncontradas[index].Key}");
-
-                        if (!ushort.TryParse(Console.ReadLine(), out var indexAExibir) || indexAExibir >= entidadesEncontradas.Count)
-                        {
-                            Console.WriteLine($"Opção inválida! {pressioneQualquerTecla}");
-                            Console.ReadKey();
-                            continue;
-                        }
-
-                        if (indexAExibir < entidadesEncontradas.Count)
-                        {
-                            var entidade = entidadesEncontradas[indexAExibir];
-
-                            Console.WriteLine("Dados [da entidade]");
-                            Console.WriteLine($"[campo string]: {entidade.Key}");
-                            Console.WriteLine($"[campo DateTime]: {entidade.Value:dd/MM/yyyy}");
-
-                            //realizar algum calculo com o campo DateTime da entidade e exibir o resultado do cálculo
-                            //exemplos:
-                            //data aniversario: quantidade de dias que faltam para o proximo aniversário do médico (em relação a data atual)
-                            //data compra carro: há quantos anos o carro foi comprado (em relação a data atual)
-                            //data de nomeação do prefeito: Quantidade de dias de gestão do prefeito até a data atual
-
-                            Console.Write(pressioneQualquerTecla);
-                            Console.ReadKey();
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Não foi encontrado nenhuma [entidade]! {pressioneQualquerTecla}");
-                        Console.ReadKey();
-                    }
-                }
-                else if (opcao == "2")
-                {
-                    Console.WriteLine("Informe [campo string] da [entidade] que deseja adicionar:"); //ex: uma informação do tipo string: nome medico, nome carro, nome prefeito
-                    var campoDoTipoStringDaEntidade = Console.ReadLine();
-
-                    Console.WriteLine("Informe [campo DateTime da entidade] (formato dd/MM/yyyy):"); //uma informação do tipo DateTime: data de aniversário do médico, data de compra do carro, data de nomeação do prefeito
-                    if (!DateTime.TryParse(Console.ReadLine(), out var campoDoTipoDateTimeDaEntidade))
-                    {
-                        Console.WriteLine($"Data inválida! Dados descartados! {pressioneQualquerTecla}");
-                        Console.ReadKey();
-                        continue;
-                    }
-
-                    Console.WriteLine("Os dados estão corretos?");
-                    Console.WriteLine($"[Campo string da entidade]: {campoDoTipoStringDaEntidade}");
-                    Console.WriteLine($"[Campo DateTime da entidade]: {campoDoTipoDateTimeDaEntidade:dd/MM/yyyy}");
-                    Console.WriteLine("1 - Sim \n2 - Não");
-
-                    var opcaoParaAdicionar = Console.ReadLine();
-
-                    if (opcaoParaAdicionar == "1")
-                    {
-                        listaEntidades.Add(campoDoTipoStringDaEntidade, campoDoTipoDateTimeDaEntidade);
-                        Console.WriteLine($"Dados adicionados com sucesso! {pressioneQualquerTecla}");
-                        Console.ReadKey();
-                    }
-                    else if (opcaoParaAdicionar == "2")
-                    {
-                        Console.WriteLine($"Dados descartados! {pressioneQualquerTecla}");
-                        Console.ReadKey();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Opção inválida! {pressioneQualquerTecla}");
-                        Console.ReadKey();
-                    }
-                }
-                else if (opcao == "3")
-                {
-                    Console.Write("Saindo do programa... ");
-                }
-                else if (opcao != "3")
-                {
-                    Console.Write($"Opcao inválida! Escolha uma opção válida. {pressioneQualquerTecla}");
-                    Console.ReadKey();
+                    case "1":
+                        PesquisarAmigos();
+                        break;
+                    case "2":
+                        AdicionarAmigo();
+                        break;
+                    case "3":
+                        Console.Write("Saindo do programa... ");
+                        break;
+                    default:
+                        Console.Write("Opcao inválida! Escolha uma opção válida. ");
+                        break;
                 }
 
-            } while (opcao != "3");
+                Console.WriteLine(pressioneQualquerTecla);
+                Console.ReadKey();
+            }
+            while (opcao != "3");
+        }
+
+        static void ExibirMenuPrincipal()
+        {
+            Console.Clear();
+            Console.WriteLine("*** Gerenciador de Amigos *** ");
+            Console.WriteLine("1 - Pesquisar Amigos:");
+            Console.WriteLine("2 - Adicionar Amigos:");
+            Console.WriteLine("3 - Sair:");
+            Console.WriteLine("\nEscolha uma das opções acima: ");
+        }
+
+        static void PesquisarAmigos()
+        {
+            Console.WriteLine("Informe o nome do amigo que deseja pesquisar:");
+            var termoDePesquisa = Console.ReadLine();
+            var amigosEncontrados = listaAmigos.Where(x => x.Key.ToLower().Contains(termoDePesquisa.ToLower()))
+                                               .ToList();
+
+            if (amigosEncontrados.Count > 0)
+            {
+                Console.WriteLine("Selecione uma das opções abaixo para visualizar os dados dos amigos encontrados:");
+                for (var index = 0; index < amigosEncontrados.Count; index++)
+                    Console.WriteLine($"{index} - {amigosEncontrados[index].Key}");
+
+                if (!ushort.TryParse(Console.ReadLine(), out var indexAExibir) || indexAExibir >= amigosEncontrados.Count)
+                {
+                    Console.Write($"Opção inválida! ");
+                    return;
+                }
+
+                if (indexAExibir < amigosEncontrados.Count)
+                {
+                    var amigo = amigosEncontrados[indexAExibir];
+
+                    Console.WriteLine("Dados do amigo:");
+                    Console.WriteLine($"Nome: {amigo.Key}");
+                    Console.WriteLine($"Data Aniversário: {amigo.Value:dd/MM/yyyy}");
+
+                    var qtdeDiasParaOProximoAniversario = CalcularQtdeDiasProximoAniversario(amigo.Value);
+                    Console.Write(ObterMensagemAniversario(qtdeDiasParaOProximoAniversario));
+                }
+            }
+            else
+            {
+                Console.Write("Não foi encontrado nenhum amigo! ");
+            }
+        }
+
+        static void AdicionarAmigo()
+        {
+            Console.WriteLine("Informe o nome do amigo que deseja adicionar:");
+            var nomeAmigo = Console.ReadLine();
+
+            Console.WriteLine("Informe a data de anivesário do amigo (formato dd/MM/yyyy):");
+            if (!DateTime.TryParse(Console.ReadLine(), out var dataAniversarioAmigo))
+            {
+                Console.Write($"Data inválida! Dados descartados! ");
+                return;
+            }
+
+            Console.WriteLine("Os dados estão corretos?");
+            Console.WriteLine($"Nome: {nomeAmigo}");
+            Console.WriteLine($"Data aniversario: {dataAniversarioAmigo:dd/MM/yyyy}");
+            Console.WriteLine("1 - Sim \n2 - Não");
+
+            var opcaoParaAdicionar = Console.ReadLine();
+
+            if (opcaoParaAdicionar == "1")
+            {
+                listaAmigos.Add(nomeAmigo, dataAniversarioAmigo);
+                Console.Write($"Dados adicionados com sucesso! ");
+            }
+            else if (opcaoParaAdicionar == "2")
+            {
+                Console.Write($"Dados descartados! ");
+            }
+            else
+            {
+                Console.Write($"Opção inválida! ");
+            }
+        }
+
+        static double CalcularQtdeDiasProximoAniversario(DateTime dataAnivesario)
+        {
+            var dataAtual = DateTime.Now.Date;
+            var diferencaEmAnos = dataAtual.Year - dataAnivesario.Year;
+            var aniversarioAnoAtual = dataAnivesario.AddYears(diferencaEmAnos);
+            var qtdeDiasParaAniversario = aniversarioAnoAtual - dataAtual;
+            return qtdeDiasParaAniversario.Days;
+        }
+
+        static string ObterMensagemAniversario(double qtdeDias)
+        {
+            if (double.IsNegative(qtdeDias))
+                return $"Este amigo já fez aniversário neste ano! ";
+            else if (qtdeDias.Equals(0d))
+                return $"Este amigo faz aniversário hoje! ";
+            else
+                return $"Faltam {qtdeDias:N0} dia(s) para o aniversário deste amigo! ";
         }
     }
 }
